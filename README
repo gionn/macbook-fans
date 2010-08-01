@@ -1,0 +1,11 @@
+Very simple fan control bash script for macbook (pro) on GNU/Linux.
+by Giovanni Toraldo
+
+Installation:
+sudo cp fans /usr/local/bin/
+sudo chmod +x /usr/local/bin/fans
+
+Add to rc.local:
+sudo nano -w /etc/rc.local
+Paste before exit 0:
+/usr/local/bin/fans &

@@ -1,0 +1,36 @@
+#!/bin/bash
+SMC=/sys/devices/platform/applesmc.768
+
+TEMPMAX=90
+TEMPMIN=45
+
+FANMAX=6200
+FANMIN=2000
+
+C1=$(( $FANMAX - $FANMIN ))
+C2=$(( $TEMPMAX - $TEMPMIN ))
+CF=$(( $C1 / $C2 ))
+
+TM=$(( $CF * $TEMPMAX - $FANMAX  ))
+#echo CF=$CF
+#echo TM=$TM
+
+echo 0 > $SMC/fan1_manual
+echo 0 > $SMC/fan2_manual
+
+
+
+while :
+do
+CORETEMP1=$(( `cat /sys/devices/platform/coretemp.0/temp1_input` / 1000 ))
+CORETEMP2=$(( `cat /sys/devices/platform/coretemp.1/temp1_input` / 1000 ))
+TEMP=$(( ($CORETEMP1 + $CORETEMP2) / 2 ))
+#echo TEMP1=$CORETEMP1
+#echo TEMP2=$CORETEMP2
+#echo TEMP=$TEMP
+SET=$(( $CF * $TEMP - $TM ))
+#echo FAN=$SET
+echo $SET > $SMC/fan1_min
+echo $SET > $SMC/fan2_min
+sleep 2
+done
